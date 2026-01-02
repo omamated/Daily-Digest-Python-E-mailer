@@ -1,7 +1,7 @@
 #the libraries I need
 import requests #use this to scrape news https://pypi.org/project/requests/
 import customtkinter # for the gui; normal tkinter isn't clean and i want to make my gui look clean 
-from dotenv import load_dotenv, set_key #use this for saving the passwords in .env
+from dotenv import load_dotenv, set_key, find_dotenv #use this for saving the passwords in .env
 import schedule # use this to auto run and send email everyday-morning
 import os # to check if its the users first time on the software with .env checking
 def main():
@@ -9,7 +9,15 @@ def main():
         gui()
     else:
         gui("setup")
+def save_credentials(user,password,choice):
+    print("save_credentials called")
+    print(f"user={user}, password={password}, choice={choice}")
+    env_path=".env"
+    set_key(env_path, "EMAIL_USERNAME", user)
+    set_key(env_path, "EMAIL_PASSWORD", password)
+    set_key(env_path, "NEWS_CHOICE", choice)
 
+    print("hi")
 
 def gui(s):
     #making the gui 
@@ -35,6 +43,7 @@ def gui(s):
             user_email=email.get()
             user_password=password.get()
             news_choice = choice_box.get()
+            save_credentials(user_email,user_password,news_choice)
             print("Saving")
             app.destroy()
             
