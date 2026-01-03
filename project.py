@@ -2,6 +2,7 @@
 from bs4 import BeautifulSoup #use this to scrape news https://www.geeksforgeeks.org/python/implementing-web-scraping-python-beautiful-soup/
 import requests # also need this to scrape news
 import time
+import feedparser # to parse rss feeds
 import customtkinter # for the gui; normal tkinter isn't too clean and i want to make my gui look clean 
 from dotenv import load_dotenv, set_key, find_dotenv #use this for saving the passwords in .env
 import schedule # use this to auto run and send email everyday-morning
@@ -76,27 +77,23 @@ def scrape_news(news_choice):
             news_items.append((headline, link))
         return news_items[:10] 
     if news_choice == "CNN News":
-        session = requests.Session()
-
-        # rinse and repeat as hacker news but adjust elements for CNN news
-        url = "https://rss.cnn.com/rss/cnn_topstories.rss" #url of website
+        url = "http://rss.cnn.com/rss/cnn_topstories.rss"
+    
+            # Fetch with headers
         headers = {
-        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
-                      "AppleWebKit/537.36 (KHTML, like Gecko) "
-                      "Chrome/120.0.0.0 Safari/537.36",
-        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-        "Accept-Language": "en-US,en;q=0.5",
-        "Connection": "keep-alive"
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
         }
-        time.sleep(2)
-        response = session.get(url, headers=headers, timeout=10)
-        print(response.status_code)
-        soup = BeautifulSoup(response.text, "xml") 
-        for item in soup.find_all("item"):
-            headline = item.title.get_text()
-            link = item.link.get_text()
+        response = requests.get(url, headers=headers)
+        
+        # Parse the response content
+        feed = feedparser.parse(response.content)
+        
+        for entry in feed.entries[:10]:
+            headline = entry.title
+            link = entry.link
             news_items.append((headline, link))
-        return news_items[:10] 
+        
+        return news_items[:10]
     else:
         raise ValueError("No news selected?") # this should be impossible as it's a dropdown but will leave just in case
     return news_items
@@ -108,5 +105,5 @@ def send_email():
 
     
 main()
-news_items=scrape_news("Hacker News")
+news_items=scrape_news("CNN News")
 print(news_items)
