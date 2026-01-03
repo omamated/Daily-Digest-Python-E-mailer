@@ -1,6 +1,7 @@
 #the libraries I need
 from bs4 import BeautifulSoup #use this to scrape news https://www.geeksforgeeks.org/python/implementing-web-scraping-python-beautiful-soup/
 import requests # also need this to scrape news
+import time
 import customtkinter # for the gui; normal tkinter isn't too clean and i want to make my gui look clean 
 from dotenv import load_dotenv, set_key, find_dotenv #use this for saving the passwords in .env
 import schedule # use this to auto run and send email everyday-morning
@@ -35,7 +36,7 @@ def gui(s):
         password=customtkinter.CTkEntry(app, placeholder_text="Password")
         password.pack(pady=20)
 
-        choice_box = customtkinter.CTkOptionMenu(app, values=["Hacker News", "Google News", "Yahoo News"])
+        choice_box = customtkinter.CTkOptionMenu(app, values=["Hacker News", "Google News", "CNN News"])
 
         choice_box.pack(pady=20)
 
@@ -74,11 +75,22 @@ def scrape_news(news_choice):
             link = item.link.get_text()
             news_items.append((headline, link))
         return news_items[:10] 
-    if news_choice == "Yahoo News":
-        # rinse and repeat as hacker news but adjust elements for Yahoo news
-        url = "https://rss.news.yahoo.com/rss/topstories" #url of website
-        response = requests.get(url) #get the og http request
-        print(response)
+    if news_choice == "CNN News":
+        session = requests.Session()
+
+        # rinse and repeat as hacker news but adjust elements for CNN news
+        url = "https://rss.cnn.com/rss/cnn_topstories.rss" #url of website
+        headers = {
+        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+                      "AppleWebKit/537.36 (KHTML, like Gecko) "
+                      "Chrome/120.0.0.0 Safari/537.36",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+        "Accept-Language": "en-US,en;q=0.5",
+        "Connection": "keep-alive"
+        }
+        time.sleep(2)
+        response = session.get(url, headers=headers, timeout=10)
+        print(response.status_code)
         soup = BeautifulSoup(response.text, "xml") 
         for item in soup.find_all("item"):
             headline = item.title.get_text()
@@ -89,12 +101,12 @@ def scrape_news(news_choice):
         raise ValueError("No news selected?") # this should be impossible as it's a dropdown but will leave just in case
     return news_items
 def send_email():
-    load_dotenv()
+    load_dotenv()   
     news_choice=os.getenv("NEWS_CHOICE")
     news=scrape_news(news_choice)
 
 
     
 main()
-news_items=scrape_news("Yahoo News")
+news_items=scrape_news("Hacker News")
 print(news_items)
