@@ -1,23 +1,23 @@
 #the libraries I need
-import requests #use this to scrape news https://pypi.org/project/requests/
-import customtkinter # for the gui; normal tkinter isn't clean and i want to make my gui look clean 
+from bs4 import BeautifulSoup #use this to scrape news https://www.geeksforgeeks.org/python/implementing-web-scraping-python-beautiful-soup/
+import requests # also need this to scrape news
+import customtkinter # for the gui; normal tkinter isn't too clean and i want to make my gui look clean 
 from dotenv import load_dotenv, set_key, find_dotenv #use this for saving the passwords in .env
 import schedule # use this to auto run and send email everyday-morning
 import os # to check if its the users first time on the software with .env checking
+import smtplib #send emails using gmail
+from email.message import  EmailMessage #for email messages
 def main():
     if os.path.isfile(".env"):
-        gui()
+        gui("dashboard")
     else:
         gui("setup")
+    schedule.every().day.at("08:00").do(send_email)
 def save_credentials(user,password,choice):
-    print("save_credentials called")
-    print(f"user={user}, password={password}, choice={choice}")
     env_path=".env"
     set_key(env_path, "EMAIL_USERNAME", user)
     set_key(env_path, "EMAIL_PASSWORD", password)
     set_key(env_path, "NEWS_CHOICE", choice)
-
-    print("hi")
 
 def gui(s):
     #making the gui 
@@ -46,13 +46,55 @@ def gui(s):
             save_credentials(user_email,user_password,news_choice)
             print("Saving")
             app.destroy()
-            
+            #gui("dashboard")
         button = customtkinter.CTkButton(app,text='Save Credentials',command=save_creds)
         button.pack(pady=20)
 
         app.mainloop()
-
+    if s == "dashboard":
+        print("hi")
+def scrape_news(news_choice):
+    news_items=[]
+    if news_choice == "Hacker News":
+        url = "https://news.ycombinator.com/" #url of website
+        response = requests.get(url) #get the og http request
+        soup = BeautifulSoup(response.text, "html.parser") 
+        for thing in soup.select("span.titleline > a"): # we use this tag as thats what hackernews tags headlines with (in HTML)
+            headline= thing.get_text()
+            link = thing['href'] # all links in html start with href
+            news_items.append((headline, link))
+        return news_items[:10] # this only takes the top 10
+    if news_choice == "Google News":
+        # rinse and repeat as hacker news but adjust elements for google news
+        url = "https://news.google.com/rss" #url of website
+        response = requests.get(url) #get the og http request
+        soup = BeautifulSoup(response.text, "xml") 
+        for item in soup.find_all("item"):
+            headline = item.title.get_text()
+            link = item.link.get_text()
+            news_items.append((headline, link))
+        return news_items[:10] 
+    if news_choice == "Yahoo News":
+        # rinse and repeat as hacker news but adjust elements for Yahoo news
+        url = "https://rss.news.yahoo.com/rss/topstories" #url of website
+        response = requests.get(url) #get the og http request
+        print(response)
+        soup = BeautifulSoup(response.text, "xml") 
+        for item in soup.find_all("item"):
+            headline = item.title.get_text()
+            link = item.link.get_text()
+            news_items.append((headline, link))
+        return news_items[:10] 
+    else:
+        raise ValueError("No news selected?") # this should be impossible as it's a dropdown but will leave just in case
+    return news_items
+def send_email():
+    load_dotenv()
+    news_choice=os.getenv("NEWS_CHOICE")
+    news=scrape_news(news_choice)
 
 
     
 main()
+news_items=scrape_news("Yahoo News")
+print(news_items)
