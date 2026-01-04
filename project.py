@@ -37,7 +37,7 @@ def gui(s):
         password=customtkinter.CTkEntry(app, placeholder_text="Password")
         password.pack(pady=20)
 
-        choice_box = customtkinter.CTkOptionMenu(app, values=["Hacker News", "Google News", "CNN News"])
+        choice_box = customtkinter.CTkOptionMenu(app, values=["Hacker News", "Google News", "AP News"])
 
         choice_box.pack(pady=20)
 
@@ -48,13 +48,21 @@ def gui(s):
             save_credentials(user_email,user_password,news_choice)
             print("Saving")
             app.destroy()
-            #gui("dashboard")
+            gui("dashboard")
         button = customtkinter.CTkButton(app,text='Save Credentials',command=save_creds)
         button.pack(pady=20)
 
         app.mainloop()
     if s == "dashboard":
-        print("hi")
+        load_dotenv()
+        news_content=scrape_news(os.getenv("NEWS_CHOICE"))
+        news_text = "\n\n".join([f"{i+1}. {title}\n{link}" for i, (title, link) in enumerate(news_content)])
+        text_box = customtkinter.CTkTextbox(app, width=450, height=450, wrap="word")
+        text_box.pack(pady=20, padx=20)
+        text_box.insert("0.0", news_text)
+        text_box.configure(state="disabled")
+
+        app.mainloop()
 def scrape_news(news_choice):
     news_items=[]
     if news_choice == "Hacker News":
@@ -76,24 +84,24 @@ def scrape_news(news_choice):
             link = item.link.get_text()
             news_items.append((headline, link))
         return news_items[:10] 
-    if news_choice == "CNN News":
-        url = "http://rss.cnn.com/rss/cnn_topstories.rss"
-    
-            # Fetch with headers
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-        }
-        response = requests.get(url, headers=headers)
-        
-        # Parse the response content
-        feed = feedparser.parse(response.content)
-        
-        for entry in feed.entries[:10]:
-            headline = entry.title
-            link = entry.link
-            news_items.append((headline, link))
-        
-        return news_items[:10]
+    if news_choice == "AP News":
+            url = "https://feedx.net/rss/ap.xml"
+            headers = {
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+            }
+            response = requests.get(url, headers=headers, timeout=10)
+            
+            feed = feedparser.parse(response.content)
+            
+            news_items = []
+            for entry in feed.entries[:10]:
+                headline = entry.title
+                link = entry.link
+                news_items.append((headline, link))
+            
+            return news_items
+
+
     else:
         raise ValueError("No news selected?") # this should be impossible as it's a dropdown but will leave just in case
     return news_items
@@ -102,8 +110,5 @@ def send_email():
     news_choice=os.getenv("NEWS_CHOICE")
     news=scrape_news(news_choice)
 
-
-    
-main()
-news_items=scrape_news("CNN News")
-print(news_items)
+if __name__== "__main__":
+    main()
