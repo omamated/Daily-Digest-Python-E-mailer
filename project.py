@@ -2,6 +2,7 @@
 from bs4 import BeautifulSoup #use this to scrape news https://www.geeksforgeeks.org/python/implementing-web-scraping-python-beautiful-soup/
 import requests # also need this to scrape news
 import time
+from datetime import datetime, date
 import feedparser # to parse rss feeds
 import customtkinter # for the gui; normal tkinter isn't too clean and i want to make my gui look clean 
 from dotenv import load_dotenv, set_key, find_dotenv #use this for saving the passwords in .env
@@ -20,16 +21,15 @@ def save_credentials(user,password,choice):
     set_key(env_path, "EMAIL_USERNAME", user)
     set_key(env_path, "EMAIL_PASSWORD", password)
     set_key(env_path, "NEWS_CHOICE", choice)
-
 def gui(s):
     #making the gui 
     app = customtkinter.CTk()
     app.title("Daily Digest News Email Sender")
-    app.geometry("600x600")
+    app.geometry("800x800")
     customtkinter.set_appearance_mode("dark")
     customtkinter.set_default_color_theme("dark-blue")
     if s == "setup": #if this is there first time ask for email + pass
-        label=customtkinter.CTkLabel(app,text="Enter your Gmail credentials")
+        label=customtkinter.CTkLabel(app,text="Enter your Gmail credentials \n These wil be saved in a .env file locally \n for your password use and app password from google \n retrieve the app password here: \n https://support.google.com/accounts/answer/185833?hl=en")
         label.pack(pady=20)#this like gives it breathing room
         email=customtkinter.CTkEntry(app, placeholder_text="Email")
         email.pack(pady=20)
@@ -62,6 +62,19 @@ def gui(s):
         text_box.insert("0.0", news_text)
         text_box.configure(state="disabled")
 
+        def send_email_and_update_status():
+            label_status.configure(text="Sending email...")
+            app.update_idletasks()
+
+            result = send_email() 
+            label_status.configure(text=result, wraplength=400)
+
+        send_email_button = customtkinter.CTkButton(app,text="Send Email Now",command=send_email_and_update_status)
+        send_email_button.pack(pady=20)
+        label_status = customtkinter.CTkLabel(app, text="")
+        label_status.pack(pady=10)
+        reset_creds_button = customtkinter.CTkButton(app, text="Reset Credentials", command=lambda: [os.remove(".env"), app.destroy(), gui("setup")])
+        reset_creds_button.pack(pady=20)
         app.mainloop()
 def scrape_news(news_choice):
     news_items=[]
@@ -109,6 +122,26 @@ def send_email():
     load_dotenv()   
     news_choice=os.getenv("NEWS_CHOICE")
     news=scrape_news(news_choice)
+    smtp_server="smtp.gmail.com"
+    smtp_port=587
+    email_user=os.getenv("EMAIL_USERNAME")
+    email_password=os.getenv("EMAIL_PASSWORD")
+    msg=EmailMessage()
+    msg['subject']=f"Your daily news digest"
+    msg['from']=email_user
+    msg['to']=email_user
+    news_content="\n\n".join([f"{i+1}. {title}\n{link}" for i, (title, link) in enumerate(news)])
+    msg.set_content(f"Here is your daily news digest from {news_choice}:\n\n{news_content}")
+    try:
+        with smtplib.SMTP(smtp_server, smtp_port) as server:
+            server.starttls()
+            server.login(email_user, email_password)
+            server.send_message(msg)
+            return("Email sent successfully.")
+    except smtplib.SMTPException as e:
+        return(f"Failed to send email: {e}")
+    except Exception as e:
+        return(f"An error occurred: {e}")
 
 if __name__== "__main__":
     main()
