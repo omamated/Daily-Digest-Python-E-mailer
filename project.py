@@ -4,6 +4,7 @@ import requests # also need this to scrape news
 import time
 from datetime import datetime, date
 import feedparser # to parse rss feeds
+import webbrowser # open links
 import customtkinter # for the gui; normal tkinter isn't too clean and i want to make my gui look clean 
 from dotenv import load_dotenv, set_key, find_dotenv #use this for saving the passwords in .env
 import schedule # use this to auto run and send email everyday-morning
@@ -16,6 +17,8 @@ def main():
     else:
         gui("setup")
     schedule.every().day.at("08:00").do(send_email)
+def open_link(url):
+    webbrowser.open_new_tab(url)
 def save_credentials(user,password,choice):
     env_path=".env"
     set_key(env_path, "EMAIL_USERNAME", user)
@@ -29,8 +32,13 @@ def gui(s):
     customtkinter.set_appearance_mode("dark")
     customtkinter.set_default_color_theme("dark-blue")
     if s == "setup": #if this is there first time ask for email + pass
-        label=customtkinter.CTkLabel(app,text="Enter your Gmail credentials \n These wil be saved in a .env file locally \n for your password use and app password from google \n retrieve the app password here: \n https://support.google.com/accounts/answer/185833?hl=en")
+        label=customtkinter.CTkLabel(app,text="Enter your Gmail credentials \n These wil be saved in a .env file locally \n for your password use and app password from google \n retrieve the app password here:")
+
         label.pack(pady=20)#this like gives it breathing room
+        label_url=customtkinter.CTkLabel(app, text="https://support.google.com/accounts/answer/185833?hl=en", text_color="#4fa5e2")
+        label_url.pack(pady=10)
+        label_url.bind("<Button-1>",lambda e: open_link("https://support.google.com/accounts/answer/185833?hl=en")
+)
         email=customtkinter.CTkEntry(app, placeholder_text="Email")
         email.pack(pady=20)
 
