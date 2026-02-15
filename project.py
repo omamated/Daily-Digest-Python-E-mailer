@@ -1,3 +1,4 @@
+
 #the libraries I need
 from bs4 import BeautifulSoup #use this to scrape news https://www.geeksforgeeks.org/python/implementing-web-scraping-python-beautiful-soup/
 import requests # also need this to scrape news
@@ -152,4 +153,4 @@ def send_email():
         return(f"An error occurred: {e}")
 
 if __name__== "__main__":
-    main()
+    main() 
