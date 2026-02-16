@@ -1,1 +1,3 @@
 Hello, this is my project. It will send you an email when you click the send email button now. The goal of this project is to send you the top ten headlines of whatever news source you would like. It takes a little bit to setup but once that's done you are able to just send yourself an email whenever. I tried to make it so the email would automatically send at a time, but  I couldn't configure it correctly.
+
+<img width="800" height="800" alt="image" src="https://github.com/user-attachments/assets/f21d5f54-4999-4295-9a4b-2ba43ab2b11a" />
