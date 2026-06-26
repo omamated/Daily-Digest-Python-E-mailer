@@ -4,7 +4,7 @@ Hello, this is my CS50 Python Final Project.
 My Final CS50 Python Project is called Daily Digest Emailer, a python news digest app. It allows users to choose a news source, see headlines, and email news to themself in a single button press. The program stores user data locally and securely in a ".env" file. I built this project because my dad was always rushing around, so by the time he got home and talked to me he wouldn't know any of the news I was talking about, so I eventually created this. It allows users to view headlines offline and all within their email. If the user doesn't find today's news interesting or doesn't care to view it, they can simply not press the send email button.
 
 # Video Demo
-<iframe width="560" height="315" src="https://www.youtube.com/embed/bJxRBa0k86A?si=bftoMtvuKt3C5gwC" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+[![YouTube](http://i.ytimg.com/vi/bJxRBa0k86A/hqdefault.jpg)](https://www.youtube.com/watch?v=bJxRBa0k86A)
 
 ### Overview
 On the first startup, the program will run a setup page that will ask your email and password. Using your email password would not be very safe so you can create an app password as explained on instruction shown during setup. Your news choice will be chosen during this setup phase. Your email, app password, and news choice will all be saved in a .env file. Your news choices are Hacker news, Google news, and AP news. 
