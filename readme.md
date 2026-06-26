@@ -6,6 +6,7 @@ My Final CS50 Python Project is called Daily Digest Emailer, a python news diges
 # Video Demo
 [![YouTube](http://i.ytimg.com/vi/bJxRBa0k86A/hqdefault.jpg)](https://www.youtube.com/watch?v=bJxRBa0k86A)
 
+[![Youtube Video]()](https://www.youtube.com/watch?v=bJxRBa0k86A)
 
 [https://www.youtube.com/watch?v=bJxRBa0k86A](https://www.youtube.com/watch?v=bJxRBa0k86A)
 
