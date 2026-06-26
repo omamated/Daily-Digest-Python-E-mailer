@@ -1,6 +1,6 @@
 Hello, this is my CS50 Python Final Project.
 
-### Daily Digest Emailer
+# Daily Digest Emailer
 My Final CS50 Python Project is called Daily Digest Emailer, a python news digest app. It allows users to choose a news source, see headlines, and email news to themself in a single button press. The program stores user data locally and securely in a ".env" file. I built this project because my dad was always rushing around, so by the time he got home and talked to me he wouldn't know any of the news I was talking about, so I eventually created this. It allows users to view headlines offline and all within their email. If the user doesn't find today's news interesting or doesn't care to view it, they can simply not press the send email button.
 
 ### Overview
