@@ -10,9 +10,13 @@ My Final CS50 Python Project is called Daily Digest Emailer, a python news diges
 
 ### Overview
 On the first startup, the program will run a setup page that will ask your email and password. Using your email password would not be very safe so you can create an app password as explained on instruction shown during setup. Your news choice will be chosen during this setup phase. Your email, app password, and news choice will all be saved in a .env file. Your news choices are Hacker news, Google news, and AP news. 
+
 <img width="804" height="825" alt="image" src="https://github.com/user-attachments/assets/add74d6f-571b-425e-8f99-c157c09d7c19" />
+
 The dashboard provides you with a preview of today's news and what will be emailed to you cleanly displayed with just the headline and link. The Send Email Now button will send an email to yourself containing today's news headlines. The email contains clickable links, so you can click on them while on the go to read more. The dashboard also contains a reset credentials screen where your .env will be deleted and you can re-enter yor email, app password, and news choice.
+
 <img width="798" height="822" alt="image" src="https://github.com/user-attachments/assets/2e1c2946-ccad-41f0-b4b8-440dcf046b57" />
+
 <img width="1116" height="654" alt="image" src="https://github.com/user-attachments/assets/4966dfee-0ff6-4f6e-bc17-32a6726b5cba" />
 
 ### How it works
